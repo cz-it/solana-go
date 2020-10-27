@@ -1,1 +1,1 @@
-pakcage solana
+package solana
