@@ -15,10 +15,10 @@ JSON RPC
 |getConfirmedBlocksWithLimit|:ballot_box_with_check:|
 |getConfirmedSignaturesForAddress|DEPRECATED|
 |getConfirmedSignaturesForAddress2|:ballot_box_with_check:|
-|getConfirmedTransaction||
+|getConfirmedTransaction|:ballot_box_with_check:|
 |getEpochInfo|:ballot_box_with_check:|
 |getEpochSchedule|:ballot_box_with_check:|
-|getFeeCalculatorForBlockhash|:ballot_box_with_check:|
+|getFeeCalculatorForBlockhash||
 |getFeeRateGovernor||
 |getFees||
 |getFirstAvailableBlock||
