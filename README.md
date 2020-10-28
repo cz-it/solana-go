@@ -18,7 +18,7 @@ JSON RPC
 |getConfirmedTransaction||
 |getEpochInfo|:ballot_box_with_check:|
 |getEpochSchedule|:ballot_box_with_check:|
-|getFeeCalculatorForBlockhash||
+|getFeeCalculatorForBlockhash|:ballot_box_with_check:|
 |getFeeRateGovernor||
 |getFees||
 |getFirstAvailableBlock||
