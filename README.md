@@ -5,16 +5,16 @@ JSON RPC
 
 | API | status |
 | --- | --- |
-|getAccountInfo||
-|getBalance||
-|getBlockCommitment||
-|getBlockTime||
-|getClusterNodes||
-|getConfirmedBlock||
-|getConfirmedBlocks||
-|getConfirmedBlocksWithLimit||
-|getConfirmedSignaturesForAddress||
-|getConfirmedSignaturesForAddress2||
+|getAccountInfo|:ballot_box_with_check:|
+|getBalance|:ballot_box_with_check:|
+|getBlockCommitment|:ballot_box_with_check:|
+|getBlockTime|:ballot_box_with_check:|
+|getClusterNodes|:ballot_box_with_check:|
+|getConfirmedBlock|:ballot_box_with_check:|
+|getConfirmedBlocks|:ballot_box_with_check:|
+|getConfirmedBlocksWithLimit|:ballot_box_with_check:|
+|getConfirmedSignaturesForAddress|DEPRECATED|
+|getConfirmedSignaturesForAddress2|:ballot_box_with_check:|
 |getConfirmedTransaction||
 |getEpochInfo|:ballot_box_with_check:|
 |getEpochSchedule|:ballot_box_with_check:|

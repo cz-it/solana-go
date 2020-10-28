@@ -1,4 +1,4 @@
-package solana
+package utils
 
 // Sysvar Programs
 var (
