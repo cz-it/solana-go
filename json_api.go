@@ -9,7 +9,7 @@ type RPCResult struct {
 	Context struct {
 		Slot int `json:"slot"`
 	} `json:"context"`
-	Value interface{} `josn:"value"`
+	Value interface{} `josn:"value,omitempty"`
 }
 
 // CommitmentConfig is commitment
@@ -418,4 +418,205 @@ func (c *Connection) GetConfirmedTransaction(publicKey string, encoding Response
 	}
 
 	return nil, fmt.Errorf("GetConfirmedTransaction with unsupport encoding")
+}
+
+// FeeCalculatorForBlockhashInfo is response for getFeeCalculatorForBlockhash
+type FeeCalculatorForBlockhashInfo struct {
+	FeeCalculator struct {
+		LamportsPerSignature int `json:"lamportsPerSignature"`
+	} `json:"feeCalculator"`
+}
+
+// GetFeeCalculatorForBlockhash Returns the fee calculator associated with
+// the query blockhash, or null if the blockhash has expired
+func (c *Connection) GetFeeCalculatorForBlockhash(publicKey string, commitment CommitmentValue) (
+	*FeeCalculatorForBlockhashInfo, error) {
+	var result RPCResult
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+	var value FeeCalculatorForBlockhashInfo
+	result.Value = &value
+	err := c.client.Call(&result, "getFeeCalculatorForBlockhash", publicKey, cmm)
+	if err != nil {
+		return nil, fmt.Errorf("GetFeeCalculatorForBlockhash with error %s", err.Error())
+	}
+	if result.Value == nil {
+		return nil, nil
+	}
+	return &value, nil
+}
+
+// FeeRateGovernorInfo is response for getFeeRateGovernor
+type FeeRateGovernorInfo struct {
+	FeeRateGovernor struct {
+		BurnPercent                int `json:"burnPercent"`
+		MaxLamportsPerSignature    int `json:"maxLamportsPerSignature"`
+		MinLamportsPerSignature    int `json:"minLamportsPerSignature"`
+		TargetLamportsPerSignature int `json:"targetLamportsPerSignature"`
+		TargetSignaturesPerSlot    int `json:"targetSignaturesPerSlot"`
+	} `json:"feeRateGovernor"`
+}
+
+// GetFeeRateGovernor Returns the fee rate governor information from the root bank
+func (c *Connection) GetFeeRateGovernor() (*FeeRateGovernorInfo, error) {
+	var result RPCResult
+	var value FeeRateGovernorInfo
+	result.Value = &value
+	err := c.client.Call(&result, "getFeeRateGovernor")
+	if err != nil {
+		return nil, fmt.Errorf("GetFeeRateGovernor with error %s", err.Error())
+	}
+	return &value, nil
+}
+
+// FeesInfo is response of getFees
+type FeesInfo struct {
+	Blockhash     string `json:"blockhash"`
+	FeeCalculator struct {
+		LamportsPerSignature int `json:"lamportsPerSignature"`
+	} `json:"feeCalculator"`
+	LastValidSlot int `json:"lastValidSlot"`
+}
+
+// GetFees Returns a recent block hash from the ledger, a fee schedule that
+// can be used to compute the cost of submitting a transaction using it,
+// and the last slot in which the blockhash will be valid.
+func (c *Connection) GetFees(commitment CommitmentValue) (*FeesInfo, error) {
+	var result RPCResult
+	var value FeesInfo
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+	result.Value = &value
+	err := c.client.Call(&result, "getFees", cmm)
+	if err != nil {
+		return nil, fmt.Errorf("GetFees with error %s", err.Error())
+	}
+	return &value, nil
+}
+
+// GetFirstAvailableBlock Returns the slot of the lowest confirmed block that
+// has not been purged from the ledger
+func (c *Connection) GetFirstAvailableBlock() (uint64, error) {
+	var value uint64
+	err := c.client.Call(&value, "getFirstAvailableBlock")
+	if err != nil {
+		return 0, fmt.Errorf("GetFirstAvailableBlock with error %s", err.Error())
+	}
+	return value, nil
+}
+
+// GetGenesisHash Returns the genesis hash
+func (c *Connection) GetGenesisHash() (string, error) {
+	var value string
+	err := c.client.Call(&value, "getGenesisHash")
+	if err != nil {
+		return "", fmt.Errorf("GetGenesisHash with error %s", err.Error())
+	}
+	return value, nil
+}
+
+// IdentityInfo is response for getIdentity
+type IdentityInfo struct {
+	Identity string `json:"identity"`
+}
+
+// GetIdentity Returns the identity pubkey for the current node
+func (c *Connection) GetIdentity() (string, error) {
+	var result IdentityInfo
+	err := c.client.Call(&result, "getIdentity")
+	if err != nil {
+		return "", fmt.Errorf("GetIdentity with error %s", err.Error())
+	}
+	return result.Identity, nil
+}
+
+// InflationGovernorInfo is response for getInflationGovernor
+type InflationGovernorInfo struct {
+	Foundation     float64 `json:"foundation"`
+	FoundationTerm float64 `json:"foundationTerm"`
+	Initial        float64 `json:"initial"`
+	Taper          float64 `json:"taper"`
+	Terminal       float64 `json:"terminal"`
+}
+
+// GetInflationGovernor Returns the current inflation governor
+func (c *Connection) GetInflationGovernor(commitment CommitmentValue) (
+	*InflationGovernorInfo, error) {
+	var result InflationGovernorInfo
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+	err := c.client.Call(&result, "getInflationGovernor", cmm)
+	if err != nil {
+		return nil, fmt.Errorf("GetInflationGovernor with error %s", err.Error())
+	}
+	return &result, nil
+}
+
+// InflationRateInfo is response for getInflationRate
+type InflationRateInfo struct {
+	Epoch      float64 `json:"epoch"`
+	Foundation float64 `json:"foundation"`
+	Total      float64 `json:"total"`
+	Validator  float64 `json:"validator"`
+}
+
+// GetInflationRate Returns the specific inflation values for the current epoch
+func (c *Connection) GetInflationRate() (*InflationRateInfo, error) {
+	var result InflationRateInfo
+	err := c.client.Call(&result, "getInflationRate")
+	if err != nil {
+		return nil, fmt.Errorf("GetInflationRate with error %s", err.Error())
+	}
+	return &result, nil
+}
+
+// GetLargestAccountsOpts is optinal for getLargestAccounts
+type GetLargestAccountsOpts struct {
+	Commitment string `json:"commitment"`
+	Filter     string `json:"filter"`
+}
+
+// LargestAccountInfo is response for getLargestAccounts
+type LargestAccountInfo struct {
+	Lamports int    `json:"lamports"`
+	Address  string `json:"address"`
+}
+
+// GetLargestAccounts Returns the 20 largest accounts, by lamport balance
+func (c *Connection) GetLargestAccounts(commitment CommitmentValue,
+	accountType AccountType) ([]LargestAccountInfo, error) {
+
+	var value []LargestAccountInfo
+	var result RPCResult
+	result.Value = &value
+
+	opts := GetLargestAccountsOpts{
+		Commitment: string(commitment),
+		Filter:     string(accountType),
+	}
+	err := c.client.Call(&result, "getLargestAccounts", opts)
+	if err != nil {
+		return nil, fmt.Errorf("GetLargestAccounts with error %s", err.Error())
+	}
+	return value, nil
+}
+
+// LeaderScheduleInfo is response for getLeaderSchedule
+type LeaderScheduleInfo map[string][]uint64
+
+// GetLeaderSchedule Returns the leader schedule for an epoch
+func (c *Connection) GetLeaderSchedule(solt uint64, commitment CommitmentValue) (
+	*LeaderScheduleInfo, error) {
+	var result LeaderScheduleInfo = make(map[string][]uint64)
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+	err := c.client.Call(&result, "getLeaderSchedule", solt, cmm)
+	if err != nil {
+		return nil, fmt.Errorf("GetLeaderSchedule with error %s", err.Error())
+	}
+	return &result, nil
 }

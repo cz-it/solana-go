@@ -7,6 +7,7 @@ import (
 const MainNet string = "https://api.mainnet-beta.solana.com"
 const TestPublicKey = "HSfwVfB7RUF1SKCd4yrz8KZp7TU262Y5BeZZN1tdCTVk"
 const TestSig = "4zcDcRS5LFzvCzgZbZWofQD8wbi5DpMQUbjrWAQEpistzTiwXaJLvVoUtnaXLzxPvXwM7mvfhHXHG7kVZ85NUAJc"
+const TokenProgram = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
 
 func TestGetEpochInfo(t *testing.T) {
 	c := NewConnection(MainNet, "recent")
@@ -152,4 +153,94 @@ func TestGetConfirmedTransaction(t *testing.T) {
 	}
 	rst3 := info3.(*ConfirmedTransactionJSONInfo)
 	t.Logf("block info: %v\n", rst3)
+}
+
+func TestGetFeeCalculatorForBlockhash(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetFeeCalculatorForBlockhash(TokenProgram, CommitmentRecent)
+	if err != nil {
+		t.Errorf("get fee calculator info error:%s", err.Error())
+	}
+	t.Logf("fee: %v\n", info)
+}
+
+func TestGetFeeRateGovernor(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetFeeRateGovernor()
+	if err != nil {
+		t.Errorf("get fee rate info error:%s", err.Error())
+	}
+	t.Logf("fee rate: %v\n", info)
+}
+
+func TestGetFees(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetFees(CommitmentRecent)
+	if err != nil {
+		t.Errorf("get fees info error:%s", err.Error())
+	}
+	t.Logf("fees: %v\n", info)
+}
+
+func TestGetFirstAvailableBlock(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetFirstAvailableBlock()
+	if err != nil {
+		t.Errorf("get first block info error:%s", err.Error())
+	}
+	t.Logf("block : %v\n", info)
+}
+
+func TestGetGenesisHash(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetGenesisHash()
+	if err != nil {
+		t.Errorf("get genesis block info error:%s", err.Error())
+	}
+	t.Logf("block : %v\n", info)
+}
+
+func TestGetIdentity(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetIdentity()
+	if err != nil {
+		t.Errorf("get  identity info error:%s", err.Error())
+	}
+	t.Logf("identity : %v\n", info)
+}
+
+func TestGetInflationGovernor(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetInflationGovernor(CommitmentRecent)
+	if err != nil {
+		t.Errorf("get InflationGovernor info error:%s", err.Error())
+	}
+	t.Logf("Inflation: %v\n", info)
+}
+
+func TestGetInflationRate(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetInflationRate()
+	if err != nil {
+		t.Errorf("get GetInflationRate info error:%s", err.Error())
+	}
+	t.Logf("InflationRate: %v\n", info)
+}
+
+func TestGetLargestAccounts(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetLargestAccounts(CommitmentRecent, AccountTypeCirculating)
+	if err != nil {
+		t.Errorf("GetLargestAccounts info error:%s", err.Error())
+	}
+	t.Logf("GetLargestAccounts: %v\n", info)
+}
+
+func TestGetLeaderSchedule(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetLeaderSchedule(104, CommitmentRecent)
+	if err != nil {
+		t.Errorf("GetLeaderSchedule info error:%s", err.Error())
+	}
+	t.Logf("GetLeaderSchedule: %v\n", info)
 }

@@ -21,3 +21,12 @@ const (
 	ResponseEncodingJSON       = "json"
 	ResponseEncodingJSONParsed = "jsonParsed"
 )
+
+// AccountType type for account
+type AccountType string
+
+// AccountType type for account
+const (
+	AccountTypeCirculating    = "circulating"
+	AccountTypeNonCirculating = "nonCirculating"
+)
