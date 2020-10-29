@@ -244,3 +244,39 @@ func TestGetLeaderSchedule(t *testing.T) {
 	}
 	t.Logf("GetLeaderSchedule: %v\n", info)
 }
+
+func TestSetLogFilter(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	err := c.SetLogFilter("solana_core=debug")
+	if err != nil {
+		t.Errorf("SetLogFilter info error:%s", err.Error())
+	}
+	t.Logf("SetLogFilter success \n")
+}
+
+func TestValidatorExit(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.ValidatorExit()
+	if err != nil {
+		t.Errorf("SetLogFilter info error:%s", err.Error())
+	}
+	t.Logf("ValidatorExit info:%v\n", info)
+}
+
+func TestRequestAirdrop(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.RequestAirdrop(TestPublicKey, 100, CommitmentRecent)
+	if err != nil {
+		//t.Errorf("RequestAirdrop info error:%s", err.Error())
+	}
+	t.Logf("RequestAirdrop info:%v\n", info)
+}
+
+func TestMinimumLedgerSlot(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.MinimumLedgerSlot()
+	if err != nil {
+		t.Errorf("MinimumLedgerSlot info error:%s", err.Error())
+	}
+	t.Logf("MinimumLedgerSlot info:%v\n", info)
+}

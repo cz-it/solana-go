@@ -41,9 +41,9 @@ JSON RPC
 |getTransactionCount||
 |getVersion||
 |getVoteAccounts||
-|minimumLedgerSlot||
-|requestAirdrop||
+|minimumLedgerSlot|:ballot_box_with_check:|
+|requestAirdrop|:heavy_exclamation_mark:|
 |sendTransaction||
 |simulateTransaction||
-|setLogFilter||
-|validatorExit||
+|setLogFilter|:ballot_box_with_check:|
+|validatorExit|:ballot_box_with_check:|

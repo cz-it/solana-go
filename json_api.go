@@ -620,3 +620,53 @@ func (c *Connection) GetLeaderSchedule(solt uint64, commitment CommitmentValue) 
 	}
 	return &result, nil
 }
+
+/***************************/
+
+// MinimumLedgerSlot Returns the lowest slot that the node has information
+//about in its ledger. This value may increase over time if the node is
+//configured to purge older ledger data
+func (c *Connection) MinimumLedgerSlot() (uint64, error) {
+	var result uint64
+	err := c.client.Call(&result, "minimumLedgerSlot")
+	if err != nil {
+		return 0, fmt.Errorf("MinimumLedgerSlot with error %s", err.Error())
+	}
+	return result, nil
+}
+
+// RequestAirdrop Requests an airdrop of lamports to a Pubkey
+func (c *Connection) RequestAirdrop(publicKey string, lamports uint64, commitment CommitmentValue) (
+	string, error) {
+
+	var result string
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+	err := c.client.Call(&result, "requestAirdrop", publicKey, lamports, cmm)
+	if err != nil {
+		return "", fmt.Errorf("RequestAirdrop with error %s", err.Error())
+	}
+	return result, nil
+}
+
+// SetLogFilter Sets the log filter on the validator
+func (c *Connection) SetLogFilter(filter string) error {
+	var result interface{}
+	err := c.client.Call(&result, "setLogFilter", filter)
+	if err != nil {
+		return fmt.Errorf("SetLogFilter with error %s", err.Error())
+	}
+	return nil
+}
+
+// ValidatorExit If a validator boots with RPC exit enabled
+// (--enable-rpc-exit parameter), this request causes the validator to exit.
+func (c *Connection) ValidatorExit() (bool, error) {
+	var result bool
+	err := c.client.Call(&result, "validatorExit")
+	if err != nil {
+		return false, fmt.Errorf("SetLogFilter with error %s", err.Error())
+	}
+	return result, nil
+}
