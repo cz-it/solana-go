@@ -8,6 +8,7 @@ const MainNet string = "https://api.mainnet-beta.solana.com"
 const TestPublicKey = "HSfwVfB7RUF1SKCd4yrz8KZp7TU262Y5BeZZN1tdCTVk"
 const TestSig = "4zcDcRS5LFzvCzgZbZWofQD8wbi5DpMQUbjrWAQEpistzTiwXaJLvVoUtnaXLzxPvXwM7mvfhHXHG7kVZ85NUAJc"
 const TokenProgram = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+const TestSPLAccount = "6xe4WTMLrcrxae196V4PLhNpqWgzmFqJw1CLVvWHkw4U"
 
 func TestGetEpochInfo(t *testing.T) {
 	c := NewConnection(MainNet, "recent")
@@ -279,4 +280,108 @@ func TestMinimumLedgerSlot(t *testing.T) {
 		t.Errorf("MinimumLedgerSlot info error:%s", err.Error())
 	}
 	t.Logf("MinimumLedgerSlot info:%v\n", info)
+}
+
+func TestGetMinimumBalanceForRentExemption(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetMinimumBalanceForRentExemption(50, CommitmentRecent)
+	if err != nil {
+		t.Errorf("GetMinimumBalanceForRentExemption info error:%s", err.Error())
+	}
+	t.Logf("GetMinimumBalanceForRentExemption info:%v\n", info)
+}
+
+func TestGetMultipleAccounts(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	opts := GetMultipleAccountsOpts{
+		Encoding: string(ResponseEncodingBase58),
+		DataSlice: struct {
+			Offset int `json:"offset"`
+			Length int `json:"length"`
+		}{
+			Offset: 0,
+			Length: 10,
+		},
+	}
+	publicKeys := []string{TestPublicKey}
+	info, err := c.GetMultipleAccounts(publicKeys, opts)
+	if err != nil {
+		t.Errorf("GetMultipleAccounts info error:%s", err.Error())
+	}
+	t.Logf("GetMultipleAccounts info:%v\n", info)
+}
+
+func TestGetRecentBlockhash(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetRecentBlockhash(CommitmentRecent)
+	if err != nil {
+		t.Errorf("GetRecentBlockhash info error:%s", err.Error())
+	}
+	t.Logf("GetRecentBlockhash info:%v\n", info)
+}
+
+func TestGetRecentPerformanceSamples(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetRecentPerformanceSamples(10)
+	if err != nil {
+		t.Errorf("GetRecentPerformanceSamples info error:%s", err.Error())
+	}
+	t.Logf("GetRecentPerformanceSamples info:%v\n", info)
+}
+
+func TestGetSignatureStatuses(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetSignatureStatuses([]string{TestSig}, true)
+	if err != nil {
+		//t.Errorf("GetSignatureStatuses info error:%s", err.Error())
+	}
+	t.Logf("GetSignatureStatuses info:%v\n", info)
+}
+
+func TestGetSlot(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetSlot(CommitmentRecent)
+	if err != nil {
+		t.Errorf("GetSlot info error:%s", err.Error())
+	}
+	t.Logf("GetSlot info:%v\n", info)
+}
+
+func TestGetSlotLeader(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetSlotLeader(CommitmentRecent)
+	if err != nil {
+		t.Errorf("GetSlotLeader info error:%s", err.Error())
+	}
+	t.Logf("GetSlotLeader info:%v\n", info)
+}
+
+func TestGetStakeActivation(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	opts := GetStakeActivationOpts{
+		Epoch: 4,
+	}
+	info, err := c.GetStakeActivation(TestPublicKey, opts)
+	if err != nil {
+		//t.Errorf("GetStakeActivation info error:%s", err.Error())
+	}
+	t.Logf("GetStakeActivation info:%v\n", info)
+}
+
+func TestGetSupply(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetSupply(CommitmentRecent)
+	if err != nil {
+		t.Errorf("GetSupply info error:%s", err.Error())
+	}
+	t.Logf("GetSupply info:%v\n", info)
+}
+
+func TestGetTokenAccountBalance(t *testing.T) {
+	c := NewConnection(MainNet, "recent")
+	info, err := c.GetTokenAccountBalance(TestSPLAccount, CommitmentRecent)
+	if err != nil {
+		t.Errorf("GetTokenAccountBalance info error:%s", err.Error())
+	}
+	t.Logf("GetTokenAccountBalance info:%v\n", info)
 }

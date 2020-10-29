@@ -621,6 +621,232 @@ func (c *Connection) GetLeaderSchedule(solt uint64, commitment CommitmentValue) 
 	return &result, nil
 }
 
+// GetMinimumBalanceForRentExemption Returns minimum balance required to make account rent exempt.
+func (c *Connection) GetMinimumBalanceForRentExemption(lenth uint64, commitment CommitmentValue) (
+	uint64, error) {
+	var result uint64
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+
+	err := c.client.Call(&result, "getMinimumBalanceForRentExemption", lenth, cmm)
+	if err != nil {
+		return 0, fmt.Errorf("GetMinimumBalanceForRentExemption with error %s", err.Error())
+	}
+	return result, nil
+}
+
+// GetMultipleAccountsOpts is optinal for getMultipleAccounts
+type GetMultipleAccountsOpts struct {
+	Commitment struct {
+		Commitment string `json:"commitment"`
+	} `json:"commitment,omitempty"`
+	Encoding  string `json:"encoding"`
+	DataSlice struct {
+		Offset int `json:"offset"`
+		Length int `json:"length"`
+	} `json:"dataSlice,omitempty"`
+}
+
+// MultipleAccountInfo is response for getMultipleAccounts
+type MultipleAccountInfo struct {
+	Data       []string `json:"data"`
+	Executable bool     `json:"executable"`
+	Lamports   int      `json:"lamports"`
+	Owner      string   `json:"owner"`
+	RentEpoch  int      `json:"rentEpoch"`
+}
+
+// GetMultipleAccounts Returns the account information for a list of Pubkeys
+func (c *Connection) GetMultipleAccounts(publicKeys []string, opts GetMultipleAccountsOpts) (
+	[]MultipleAccountInfo, error) {
+	var value []MultipleAccountInfo
+	var result RPCResult
+	result.Value = &value
+
+	err := c.client.Call(&result, "getMultipleAccounts", publicKeys, opts)
+	if err != nil {
+		return nil, fmt.Errorf("GetMultipleAccounts with error %s", err.Error())
+	}
+	return value, nil
+}
+
+// RecentBlockhashInfo response for getRecentBlockhash
+type RecentBlockhashInfo struct {
+	Blockhash     string `json:"blockhash"`
+	FeeCalculator struct {
+		LamportsPerSignature int `json:"lamportsPerSignature"`
+	} `json:"feeCalculator"`
+}
+
+// GetRecentBlockhash Returns a recent block hash from the ledger,
+// and a fee schedule that can be used to compute the cost of submitting a transaction using it
+func (c *Connection) GetRecentBlockhash(commitment CommitmentValue) (
+	*RecentBlockhashInfo, error) {
+	var result RPCResult
+	var value RecentBlockhashInfo
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+	result.Value = &value
+	err := c.client.Call(&result, "getRecentBlockhash", cmm)
+	if err != nil {
+		return nil, fmt.Errorf("GetRecentBlockhash with error %s", err.Error())
+	}
+	return &value, nil
+}
+
+// RecentPerformanceSampleInfo is response for getRecentPerformanceSamples
+type RecentPerformanceSampleInfo struct {
+	NumSlots         int `json:"numSlots"`
+	NumTransactions  int `json:"numTransactions"`
+	SamplePeriodSecs int `json:"samplePeriodSecs"`
+	Slot             int `json:"slot"`
+}
+
+// GetRecentPerformanceSamples Returns a list of recent performance samples,
+// in reverse slot order. Performance samples are taken every 60 seconds
+// and include the number of transactions and slots that occur in a given time window.
+func (c *Connection) GetRecentPerformanceSamples(limit uint64) (
+	[]RecentPerformanceSampleInfo, error) {
+	var value []RecentPerformanceSampleInfo
+	err := c.client.Call(&value, "getRecentPerformanceSamples", limit)
+	if err != nil {
+		return nil, fmt.Errorf("GetRecentPerformanceSamples with error %s", err.Error())
+	}
+	return value, nil
+}
+
+// GetSignatureStatusesOpts is optional for GetSignatureStatuses
+type GetSignatureStatusesOpts struct {
+	SearchTransactionHistory bool `json:"searchTransactionHistory"`
+}
+
+// SignatureStatuseInfo is response for GetSignatureStatuses
+type SignatureStatuseInfo struct {
+	Slot          int         `json:"slot"`
+	Confirmations interface{} `json:"confirmations"`
+	Err           interface{} `json:"err"`
+	Status        struct {
+		Ok interface{} `json:"Ok"`
+	} `json:"status"`
+}
+
+// GetSignatureStatuses Returns the statuses of a list of signatures. Unless
+//the searchTransactionHistory configuration parameter is included, this method
+//only searches the recent status cache of signatures, which retains statuses
+//for all active slots plus MAX_RECENT_BLOCKHASHES rooted slots.
+func (c *Connection) GetSignatureStatuses(signatures []string, searchTransactionHistory bool) (
+	[]SignatureStatuseInfo, error) {
+	opts := GetSignatureStatusesOpts{
+		SearchTransactionHistory: searchTransactionHistory,
+	}
+	var value []SignatureStatuseInfo
+	err := c.client.Call(&value, "getSignatureStatuses", signatures, opts)
+	if err != nil {
+		return nil, fmt.Errorf("GetSignatureStatuses with error %s", err.Error())
+	}
+	return value, nil
+}
+
+// GetSlot Returns the current slot the node is processing
+func (c *Connection) GetSlot(commitment CommitmentValue) (uint64, error) {
+	var result uint64
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+	err := c.client.Call(&result, "getSlot", cmm)
+	if err != nil {
+		return 0, fmt.Errorf("MinimumLedgerSlot with error %s", err.Error())
+	}
+	return result, nil
+}
+
+// GetSlotLeader Returns the current slot leader
+func (c *Connection) GetSlotLeader(commitment CommitmentValue) (string, error) {
+	var result string
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+	err := c.client.Call(&result, "getSlotLeader", cmm)
+	if err != nil {
+		return "", fmt.Errorf("GetSlotLeader with error %s", err.Error())
+	}
+	return result, nil
+}
+
+// GetStakeActivationOpts is optional for GetStakeActivation
+type GetStakeActivationOpts struct {
+	Commitment struct {
+		Commitment string `json:"commitment"`
+	} `json:"commitment,omitempty"`
+	Epoch int `json:"epoch,omitempty"`
+}
+
+// StakeActivationInfo is response for GetStakeActivation
+type StakeActivationInfo struct {
+	Active   int    `json:"active"`
+	Inactive int    `json:"inactive"`
+	State    string `json:"state"`
+}
+
+// GetStakeActivation Returns epoch activation information for a stake account
+func (c *Connection) GetStakeActivation(publicKey string, opts GetStakeActivationOpts) (
+	*StakeActivationInfo, error) {
+	var result StakeActivationInfo
+	err := c.client.Call(&result, "getStakeActivation", publicKey, opts)
+	if err != nil {
+		return nil, fmt.Errorf("GetSlotLeader with error %s", err.Error())
+	}
+	return &result, nil
+}
+
+//SupplyInfo is response for GetSupply
+type SupplyInfo struct {
+	Circulating            int      `json:"circulating"`
+	NonCirculating         int      `json:"nonCirculating"`
+	NonCirculatingAccounts []string `json:"nonCirculatingAccounts"`
+	Total                  int      `json:"total"`
+}
+
+// GetSupply Returns information about the current supply.
+func (c *Connection) GetSupply(commitment CommitmentValue) (*SupplyInfo, error) {
+	var value SupplyInfo
+	var result RPCResult
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+	result.Value = &value
+	err := c.client.Call(&result, "getSupply", cmm)
+	if err != nil {
+		return nil, fmt.Errorf("GetSlotLeader with error %s", err.Error())
+	}
+	return &value, nil
+}
+
+// TokenAccountBalanceInfo is response for GetTokenAccountBalance
+type TokenAccountBalanceInfo struct {
+	UIAmount float64 `json:"uiAmount"`
+	Amount   string  `json:"amount"`
+	Decimals int     `json:"decimals"`
+}
+
+//GetTokenAccountBalance Returns the token balance of an SPL Token account
+func (c *Connection) GetTokenAccountBalance(publicKey string, commitment CommitmentValue) (
+	*TokenAccountBalanceInfo, error) {
+	var value TokenAccountBalanceInfo
+	var result RPCResult
+	cmm := CommitmentConfig{
+		Commitment: string(commitment),
+	}
+	result.Value = &value
+	err := c.client.Call(&result, "getTokenAccountBalance", publicKey, cmm)
+	if err != nil {
+		return nil, fmt.Errorf("GetTokenAccountBalance with error %s", err.Error())
+	}
+	return &value, nil
+}
+
 /***************************/
 
 // MinimumLedgerSlot Returns the lowest slot that the node has information

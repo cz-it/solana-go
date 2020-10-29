@@ -20,6 +20,7 @@ const (
 	ResponseEncodingBase58     = "base58"
 	ResponseEncodingJSON       = "json"
 	ResponseEncodingJSONParsed = "jsonParsed"
+	ResponseEncodingBinary     = "binary"
 )
 
 // AccountType type for account
