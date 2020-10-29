@@ -38,7 +38,7 @@ JSON RPC
 |getSlotLeader|:ballot_box_with_check:|
 |getStakeActivation|:ballot_box_with_check:|
 |getSupply|:ballot_box_with_check:|
-|getTokenAccountBalance|"ballot_box_with_check"|
+|getTokenAccountBalance|:ballot_box_with_check:|
 |getTokenAccountsByDelegate||
 |getTokenAccountsByOwner||
 |getTokenLargestAccounts||
